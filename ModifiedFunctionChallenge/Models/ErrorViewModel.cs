@@ -1,6 +1,6 @@
 using System;
 
-namespace ModifiedFunctionChallenge.Models
+namespace FunctionChallenge.Models
 {
     public class ErrorViewModel
     {
