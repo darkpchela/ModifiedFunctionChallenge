@@ -37,6 +37,9 @@ namespace FunctionChallenge.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return View("Main", chartViewModel);
+
                 var mapper = new MapperConfiguration(cfg=>cfg.CreateMap<ChartViewModel, ChartModel>().ReverseMap()).CreateMapper();
                 var model = mapper.Map<ChartViewModel, ChartModel>(chartViewModel);
                 string points = await chartService.GetPointsForAsync(model);

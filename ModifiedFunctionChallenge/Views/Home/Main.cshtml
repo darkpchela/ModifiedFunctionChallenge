@@ -46,54 +46,5 @@
 @section Scripts{
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
-    @*ChartScript*@
-    <script>
-        let myChartName = "chart";
-        let ctx = document.getElementById(myChartName);
-        let my_chart = new Chart(ctx,
-            {
-                type: "line",
-                data:
-                {
-                    labelsp: [],
-                    datasets:
-                        [{
-                            label: 'f(x) = ax^2 + bx + c',
-                            data: [],
-                            borderColor: 'blue',
-                            borderWidth: 2,
-                            fill: false
-                        }]
-                },
-                options:
-                {
-                    responsitive: true,
-                    scales:
-                    {
-                        xAxes:
-                            [{
-                                display: true
-                            }],
-                        yAxes:
-                            [{
-                                display: true
-                            }]
-                    }
-                }
-            });
-        $(function () {
-            if ($("#pointsJSON").val().length>0) {
-                let points = JSON.parse($("#pointsJSON").val()) ?? [];
-                my_chart.data.labels = [];
-                my_chart.data.datasets[0].data = [];
-                for (let i = 0; i < points.length; i++) {
-                    my_chart.data.labels.push(points[i].x);
-                    my_chart.data.datasets[0].data.push(points[i].y);
-                }
-                my_chart.update();
-                console.log('chart updated');
-            }
-
-        });
-    </script>
+    <script src="~/js/ChartScript.js"></script>
 }

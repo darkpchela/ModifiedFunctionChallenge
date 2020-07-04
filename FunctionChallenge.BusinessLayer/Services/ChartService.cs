@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FunctionChallenge.BusinessLayer.Services
 {
@@ -35,6 +36,23 @@ namespace FunctionChallenge.BusinessLayer.Services
             var points = await Task.Run(() =>innerFunction(model.a, model.b, model.c, model.step, model.from, model.to));
             return JsonSerializer.Serialize(points);
         }
+        private IEnumerable<Point> innerFunction(double a, double b, double c, double step,
+            double from, double to)
+        {
+            List<Point> points = new List<Point>();
+            for (double x = from; x <= to; x += step)
+            {
+                double y = a * (Math.Pow(x, 2)) + (b * x) + c;
+                Point point = new Point() 
+                {
+                    x=x,
+                    y=y
+                };
+                points.Add(point);
+            }
+            return points;
+        }
+
         public async Task SaveAsync(ChartModel model)
         {
             if (model.points == null)
@@ -75,40 +93,55 @@ namespace FunctionChallenge.BusinessLayer.Services
             
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<ChartModel> GetChartByNameAsync(string name)
         {
-            await unitOfWork.Charts.DeleteAsync(id);
-        }
+            var allCharts = unitOfWork.Charts.GetAll();
+            var allUserDatas = unitOfWork.UserDatas.GetAll();
+            var allPoints = unitOfWork.Points.GetAll();
+            var res = (from c in allCharts
+                       join ud in allUserDatas on c.UDKey equals ud.UDKey
+                       where c.ChartName == name
+                       select new
+                       {
+                           id=c.CKey,
+                           chartName = c.ChartName,
+                           a = ud.a,
+                           b = ud.b,
+                           c = ud.c,
+                           step = ud.step,
+                           fromX = ud.x1,
+                           toX = ud.xn
 
-        public async Task<ChartModel> GetChartAsync(int id)
-        {
-            //var chart = await unitOfWork.Charts.GetAsync(id);
-            //var model = mapper.Map<ChartModel>(chart);
+                       }).First();
 
-            //return model;
-            return null;
+            ChartModel chartModel = new ChartModel()
+            {
+                a = res.a,
+                b = res.b,
+                c = res.c,
+                chartName = res.chartName,
+                from = res.fromX,
+                to = res.toX,
+                step = res.step,
+                points = JsonSerializer.Serialize(allPoints.Where(p=>p.CKey==res.id).OrderByDescending(p=>p.x).Select(p=>p))
+            };
+            return chartModel;
         }
 
         public async Task UpdateAsync(ChartModel model)
         {
 
         }
-
-        private IEnumerable<Point> innerFunction(double a, double b, double c, double step,
-            double from, double to)
+        public async Task DeleteByNameAsync(string name)
         {
-            List<Point> points = new List<Point>();
-            for (double x = from; x <= to; x += step)
-            {
-                double y = a * (Math.Pow(x, 2)) + (b * x) + c;
-                Point point = new Point() 
-                {
-                    x=x,
-                    y=y
-                };
-                points.Add(point);
-            }
-            return points;
+            var chart = unitOfWork.Charts.GetAll().First(c=>c.ChartName==name);
+            await unitOfWork.Charts.DeleteAsync(chart.CKey);
+        }
+
+        public async Task<IEnumerable<string>> GetAllChartsNamesAsync()
+        {
+            List<string> chartNames = await unitOfWork.Charts.GetAll().Select(c => c.ChartName).ToListAsync();
+            return chartNames;
         }
     }
 }

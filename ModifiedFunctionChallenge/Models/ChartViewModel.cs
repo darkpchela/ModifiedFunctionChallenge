@@ -8,13 +8,25 @@ namespace FunctionChallenge.Models
 {
     public class ChartViewModel
     {
-        public int a { get; set; }
-        public int b { get; set; }
-        public int c { get; set; }
+        [Required]
+        [Range(-100, 100, ErrorMessage = "Value should be between -100 and 100")]
+        public double a { get; set; }
+        [Required]
+        [Range(-100, 100, ErrorMessage = "Value should be between -100 and 100")]
+        public double b { get; set; }
+        [Required]
+        [Range(-100, 100, ErrorMessage = "Value should be between -100 and 100")]
+        public double c { get; set; }
+        [Required]
+        [Range(1, 100, ErrorMessage = "Value should be between 1 and 100")]
         public int step { get; set; }
+        [Required]
+        [Range(-100, 100, ErrorMessage = "Value should be between -100 and 100")]
         public int from { get; set; }
+        [Required]
+        [Range(-100, 100, ErrorMessage = "Value should be between -100 and 100")]
         public int to { get; set; }
-        public string points { get; set; }
         public string chartName { get; set; }
+        public string points { get; set; }
     }
 }

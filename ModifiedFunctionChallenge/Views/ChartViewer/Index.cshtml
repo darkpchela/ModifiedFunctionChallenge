@@ -1,0 +1,44 @@
+﻿@model ChartViewerViewModel
+@{
+    ViewData["Title"] = "ChartViewer";
+    ViewData["Front"] = "NoReact";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="app-container">
+    <div id="chart-box" class="chart-box">
+        <div class="chart-container">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+    <select asp-items="ViewBag.ChartsNamesList" id="namesList">
+    </select>
+    <input type="hidden" value="" id="pointsJSON" />
+</div>
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="~/js/ChartScript.js"></script>
+    <script>
+        $(function () {
+
+            $("#namesList").change(function (e) {
+                let selectedName = $(this).val();
+                $.ajax({
+                    method: "POST",
+                    url: "/ChartViewer/ChangeChartAjax/",
+                    data: { chartName: selectedName },
+                    success: function (response) {
+                        $("#pointsJSON").val(response);
+                        setNewChartData(response);
+                    },
+                    error: function () {
+                        console.log("ajax error");
+                    }
+                }
+                );
+            });
+        }
+        );
+    </script>
+}
+
