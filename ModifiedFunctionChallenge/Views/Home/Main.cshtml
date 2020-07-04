@@ -1,0 +1,99 @@
+﻿@model ChartViewModel
+@{
+    ViewData["Title"] = "No react";
+    ViewData["Front"] = "No React";
+}
+<div class="app-container">
+    <div id="chart-box" class="chart-box">
+        <div class="chart-container">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+    <div class="chart-form">
+        <form id="form" asp-controller="Home" asp-action="Function">
+            <label class="title">Function: y = ax^2 + bx + c</label>
+            <div class="flex-row">
+                <div>
+                    <label>a:</label> <input type="number" name="a" defaultValue="5" asp-for="a" />
+                </div>
+                <div>
+                    <label>b:</label><input type="number" name="b" defaultValue="5" asp-for="b" />
+                </div>
+                <div>
+                    <label>c:</label><input type="number" name="c" defaultValue="16" asp-for="c" />
+                </div>
+                <div>
+                    <label>Step:</label><input type="number" name="step" defaultValue="1" asp-for="step" />
+                </div>
+                <div>
+                    <label>From:</label> <input type="number" name="from" defaultValue="-10" asp-for="from" />
+                </div>
+                <div>
+                    <label>To:</label><input type="number" name="to" defaultValue="10" asp-for="to" />
+                </div>
+                <div>
+                    <label>Chart name:</label><input type="text" name="chartName" asp-for="chartName" />
+                </div>
+            </div>
+            <input type="hidden" name="points" asp-for="points" id="pointsJSON" value="@Model?.points" />
+            <button id="btn" type="submit">Plot</button>
+            <div class="text-danger" asp-validation-summary="All"></div>
+            <button type="submit" asp-controller="Home" asp-action="Save">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    @*ChartScript*@
+    <script>
+        let myChartName = "chart";
+        let ctx = document.getElementById(myChartName);
+        let my_chart = new Chart(ctx,
+            {
+                type: "line",
+                data:
+                {
+                    labelsp: [],
+                    datasets:
+                        [{
+                            label: 'f(x) = ax^2 + bx + c',
+                            data: [],
+                            borderColor: 'blue',
+                            borderWidth: 2,
+                            fill: false
+                        }]
+                },
+                options:
+                {
+                    responsitive: true,
+                    scales:
+                    {
+                        xAxes:
+                            [{
+                                display: true
+                            }],
+                        yAxes:
+                            [{
+                                display: true
+                            }]
+                    }
+                }
+            });
+        $(function () {
+            if ($("#pointsJSON").val().length>0) {
+                let points = JSON.parse($("#pointsJSON").val()) ?? [];
+                my_chart.data.labels = [];
+                my_chart.data.datasets[0].data = [];
+                for (let i = 0; i < points.length; i++) {
+                    my_chart.data.labels.push(points[i].x);
+                    my_chart.data.datasets[0].data.push(points[i].y);
+                }
+                my_chart.update();
+                console.log('chart updated');
+            }
+
+        });
+    </script>
+}

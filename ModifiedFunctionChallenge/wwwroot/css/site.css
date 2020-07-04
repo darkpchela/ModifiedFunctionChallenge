@@ -29,11 +29,6 @@ a {
 html {
   font-size: 14px;
 }
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
 
 .border-top {
   border-top: 1px solid #e5e5e5;
@@ -60,7 +55,9 @@ html {
 
 body {
   /* Margin bottom by footer height */
-  margin-bottom: 60px;
+  position: absolute;
+  height: 100%;
+  width: 100%;
 }
 .footer {
   position: absolute;
@@ -68,4 +65,95 @@ body {
   width: 100%;
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
+}
+
+/*MyStyle*/
+* {
+  box-sizing: border-box;
+}
+.app-container{
+  margin-top: 3%;
+  padding: 2%;
+  font-size: 16px;
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.chart-box{
+  width: 1024px;
+  height: 768px;
+  background-color: rgba(218, 165, 32, 0.26);
+  padding: 1%;
+  border: 2px solid darkgray;
+  flex: 3;
+}
+.chart-box canvas{
+  min-width: 250px;
+  min-height: 250px;
+  max-height: 768px;
+}
+.chart-form{
+  padding: 1%;
+  margin-top: 3%;
+  font-size: 20px;
+  width: 1024px;
+  flex: 1;
+  border: 2px solid darkgrey;
+}
+
+.chart-form label{
+  font-weight: bold;
+}
+
+.chart-form label.title{
+  display: inline-block;
+  margin-bottom: 3%;
+  width: 100%;
+  text-align: center;
+  font: bold italic large Verdana;
+}
+.chart-form button{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2%;
+  width: 30%;
+  text-align: center;
+}
+.chart-form .flex-row{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-flow: row wrap;
+}
+.flex-row div{
+  margin-right: 1%;
+  margin-top: 1%;
+}
+.chart-form input{
+  border: 1px thin darkslategray;
+  display: inline-block;
+  margin-left: 2px;
+  max-width: 60px;
+  width: 10vw;
+}
+
+@media (max-width: 1150px) {
+  .chart-box{
+    width: 90vw;
+  }
+  .chart-form{
+    width: 90vw;
+  }
+}
+@media (max-width: 800px){
+  .chart-box{
+    width: 90vw;
+    height: 90vh;
+  }
+  .chart-form{
+    font-size: 14px;
+  }
 }

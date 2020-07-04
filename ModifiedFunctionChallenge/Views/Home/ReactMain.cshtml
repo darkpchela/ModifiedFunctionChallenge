@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "React";
+    ViewData["Front"] = "With React";
+}
+    <div class="app-container">
+        <div id="chart-box" class="chart-box">
+        </div>
+        <div id="input-box" class="chart-form">
+        </div>
+    </div>
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.11.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.11.0/umd/react-dom.development.js"></script>
+    <script src="@Url.Content("~/js/app.jsx")"></script>
+}
