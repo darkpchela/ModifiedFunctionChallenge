@@ -11,6 +11,7 @@ using FunctionChallenge.BusinessLayer.DTO;
 using FunctionChallenge.BusinessLayer.Interfaces;
 using AutoMapper;
 using FunctionChallenge.BusinessLayer.Infrastructure;
+using Microsoft.AspNetCore.Http;
 
 namespace FunctionChallenge.Controllers
 {
@@ -38,9 +39,10 @@ namespace FunctionChallenge.Controllers
             {
                 var mapper = new MapperConfiguration(cfg=>cfg.CreateMap<ChartViewModel, ChartModel>().ReverseMap()).CreateMapper();
                 var model = mapper.Map<ChartViewModel, ChartModel>(chartViewModel);
-                model = await chartService.GetPointsForAsync(model);
-                var resModel = mapper.Map<ChartModel, ChartViewModel>(model);
-                return View("Main", resModel);
+                string points = await chartService.GetPointsForAsync(model);
+                chartViewModel.points = points;//Maybe later better to remove "points" from VM, and work only through session
+                HttpContext.Session.SetString("points", points);
+                return View("Main", chartViewModel);
             }
             catch (CustomValidationException ex)
             {
@@ -56,6 +58,11 @@ namespace FunctionChallenge.Controllers
             {
                 var mapper = new MapperConfiguration(cfg => cfg.CreateMap<ChartViewModel, ChartModel>().ReverseMap()).CreateMapper();
                 var model = mapper.Map<ChartViewModel, ChartModel>(chartViewModel);
+                string sessionPoints = HttpContext.Session.GetString("points");
+                string points = await chartService.GetPointsForAsync(model);
+                if (sessionPoints != points)
+                    throw new CustomValidationException("Values of current chart were changed. Plot new before saving","");
+
                 await chartService.SaveAsync(model);
                 return View("Main");
             }

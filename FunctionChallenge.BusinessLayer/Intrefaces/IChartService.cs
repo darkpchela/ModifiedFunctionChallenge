@@ -9,7 +9,7 @@ namespace FunctionChallenge.BusinessLayer.Interfaces
     public interface IChartService
     {
         Task<ChartModel> GetChartAsync(int id);
-        Task<ChartModel> GetPointsForAsync(ChartModel model);
+        Task<string> GetPointsForAsync(ChartModel model);
 
         Task SaveAsync(ChartModel model);
 

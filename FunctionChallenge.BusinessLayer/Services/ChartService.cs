@@ -25,7 +25,7 @@ namespace FunctionChallenge.BusinessLayer.Services
             //this.mapper = mapper;
         }
 
-        public async Task<ChartModel> GetPointsForAsync(ChartModel model)
+        public async Task<string> GetPointsForAsync(ChartModel model)
         {
             if (model.to <= model.from)
                throw new CustomValidationException("Value of 'to' must be greater then 'From'", "");
@@ -33,8 +33,7 @@ namespace FunctionChallenge.BusinessLayer.Services
                throw new CustomValidationException("Value of 'step' must be greater, then difference of 'from' and 'to'", "");
 
             var points = await Task.Run(() =>innerFunction(model.a, model.b, model.c, model.step, model.from, model.to));
-            model.points = JsonSerializer.Serialize(points);
-            return model;
+            return JsonSerializer.Serialize(points);
         }
         public async Task SaveAsync(ChartModel model)
         {
@@ -42,7 +41,8 @@ namespace FunctionChallenge.BusinessLayer.Services
                 throw new CustomValidationException("Chart need to be plotted before saving", nameof(ChartModel.points));
             if (model.chartName == null)
                 throw new CustomValidationException("Name required", nameof(ChartModel.chartName));
-
+            if (await unitOfWork.Charts.GetAll().AnyAsync(c => c.ChartName == model.chartName))
+                throw new CustomValidationException("Chart with this name already exists", nameof(ChartModel.chartName));
 
             //Here may use automapper
             UserData userData = new UserData() {
@@ -93,10 +93,6 @@ namespace FunctionChallenge.BusinessLayer.Services
         {
 
         }
-
-
-
-
 
         private IEnumerable<Point> innerFunction(double a, double b, double c, double step,
             double from, double to)
