@@ -98,21 +98,25 @@ namespace FunctionChallenge.BusinessLayer.Services
             var allCharts = unitOfWork.Charts.GetAll();
             var allUserDatas = unitOfWork.UserDatas.GetAll();
             var allPoints = unitOfWork.Points.GetAll();
-            var res = (from c in allCharts
-                       join ud in allUserDatas on c.UDKey equals ud.UDKey
-                       where c.ChartName == name
-                       select new
-                       {
-                           id=c.CKey,
-                           chartName = c.ChartName,
-                           a = ud.a,
-                           b = ud.b,
-                           c = ud.c,
-                           step = ud.step,
-                           fromX = ud.x1,
-                           toX = ud.xn
 
-                       }).First();
+            if (!allCharts.Any(c => c.ChartName == name))
+                return new ChartModel();
+
+            var res = await (from c in allCharts
+                             join ud in allUserDatas on c.UDKey equals ud.UDKey
+                             where c.ChartName == name
+                             select new
+                             {
+                                 id = c.CKey,
+                                 chartName = c.ChartName,
+                                 a = ud.a,
+                                 b = ud.b,
+                                 c = ud.c,
+                                 step = ud.step,
+                                 fromX = ud.x1,
+                                 toX = ud.xn
+
+                             }).FirstAsync();
 
             ChartModel chartModel = new ChartModel()
             {
@@ -123,7 +127,7 @@ namespace FunctionChallenge.BusinessLayer.Services
                 from = res.fromX,
                 to = res.toX,
                 step = res.step,
-                points = JsonSerializer.Serialize(allPoints.Where(p=>p.CKey==res.id).OrderByDescending(p=>p.x).Select(p=>p))
+                points = JsonSerializer.Serialize(allPoints.Where(p => p.CKey == res.id).OrderByDescending(p => p.x).Select(p => p))
             };
             return chartModel;
         }

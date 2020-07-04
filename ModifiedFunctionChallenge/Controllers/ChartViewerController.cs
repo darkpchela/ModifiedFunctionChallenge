@@ -19,7 +19,8 @@ namespace ModifiedFunctionChallenge.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            ViewBag.ChartsNamesList = new SelectList(await chartService.GetAllChartsNamesAsync());
+            var list = await chartService.GetAllChartsNamesAsync();
+            ViewBag.ChartsNamesList = new SelectList(list);
             return View();
         }
 

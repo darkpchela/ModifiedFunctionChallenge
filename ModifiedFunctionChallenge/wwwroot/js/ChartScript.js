@@ -33,12 +33,17 @@ let my_chart = new Chart(ctx,
     });
 
 let setNewChartData = function (pointsJson) {
-    let points = JSON.parse($("#pointsJSON").val()) ?? [];
     my_chart.data.labels = [];
     my_chart.data.datasets[0].data = [];
-    for (let i = 0; i < points.length; i++) {
-        my_chart.data.labels.push(points[i].x);
-        my_chart.data.datasets[0].data.push(points[i].y);
+    try {
+        let points = JSON.parse(pointsJson);
+        for (let i = 0; i < points.length; i++) {
+            my_chart.data.labels.push(points[i].x);
+            my_chart.data.datasets[0].data.push(points[i].y);
+        }
+    }
+    catch (ex) {
+        console.log(ex);
     }
     my_chart.update();
 }
