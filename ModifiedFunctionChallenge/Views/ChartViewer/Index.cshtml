@@ -1,36 +1,53 @@
-﻿@model ChartViewerViewModel
-@{
+﻿@{
     ViewData["Title"] = "ChartViewer";
     ViewData["Front"] = "NoReact";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="app-container">
-    <div id="chart-box" class="chart-box">
-        <div class="chart-container">
-            <canvas id="chart"></canvas>
+    <div class="app-container">
+        <div id="chart-box" class="chart-box">
+            <div class="chart-container">
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
+        <div class="chart-form info-form">
+            <div class="selection">
+                <div>
+                <select asp-items="ViewBag.ChartsNamesList" id="namesList">
+                    <option value="" selected="selected">Select chart's name here</option>
+                </select>
+                 </div>
+                <div>
+                <button type="button" id="btnPlot">Plot selected chart</button>
+                </div>
+            </div>
+            <div class="partial" id="info">
+                @{await Html.RenderPartialAsync("FuncView"); }
+            </div>
         </div>
     </div>
-    <select asp-items="ViewBag.ChartsNamesList" id="namesList">
-        <option value="" selected="selected">Select chart's name here</option>
-    </select>
-    <input type="hidden" value="" id="pointsJSON" />
-</div>
 @section Scripts{
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
     <script src="~/js/ChartScript.js"></script>
     <script>
         $(function () {
+            $("#btnPlot").click(function (e) {
+                let selectedName = $("#namesList").val();
+                console.log(selectedName);
 
-            $("#namesList").change(function (e) {
-                let selectedName = $(this).val();
+                if (selectedName == "") {
+                    console.log("no name");
+                    return;
+                }
+
                 $.ajax({
                     method: "POST",
                     url: "/ChartViewer/ChangeChartAjax/",
                     data: { chartName: selectedName },
                     success: function (response) {
-                        $("#pointsJSON").val(response);
-                        setNewChartData(response);
+                        setNewChartData(response.points);
+                        $("#info").empty();
+                        $("#info").append(response.html);
                     },
                     error: function () {
                         console.log("ajax error");

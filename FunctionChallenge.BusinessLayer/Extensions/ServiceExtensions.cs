@@ -18,6 +18,7 @@ namespace FunctionChallenge.BusinessLayer.Extensions
             services.AddTransient<IChartService, ChartService>();
             services.AddDatabaseDependencies();
             services.AddDatabaseContext(configuration);
+            services.AddSingleton<IViewToStringConverter, ViewToStringConverter>();
             return services;
         }
     }

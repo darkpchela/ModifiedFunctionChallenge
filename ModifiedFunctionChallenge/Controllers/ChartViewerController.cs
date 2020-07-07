@@ -5,15 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using FunctionChallenge.BusinessLayer.Interfaces;
+using FunctionChallenge.Models;
 
 namespace ModifiedFunctionChallenge.Controllers
 {
     public class ChartViewerController : Controller
     {
         IChartService chartService;
-        public ChartViewerController(IChartService chartService)
+        IViewToStringConverter viewConverter;
+        public ChartViewerController(IChartService chartService, IViewToStringConverter viewConverter)
         {
             this.chartService = chartService;
+            this.viewConverter = viewConverter;
         }
 
         [HttpGet]
@@ -25,11 +28,24 @@ namespace ModifiedFunctionChallenge.Controllers
         }
 
         [HttpPost]
-        public async Task<string> ChangeChartAjax(string chartName)
+        public async Task<IActionResult> ChangeChartAjax(string chartName)
         {
             var chart = await chartService.GetChartByNameAsync(chartName);
+
+            string html = await viewConverter.RenderPartialViewToString(this, "FuncView", new ChartViewModel
+            {
+                a = chart.a,
+                b = chart.b,
+                c = chart.c,
+                from = chart.from,
+                to = chart.to,
+                step = chart.step,
+                points = chart.points,
+                chartName = chart.chartName
+            });
+
             string points = chart.points;
-            return points;
+            return Json(new {points, html });
         }
     }
 }

@@ -19,13 +19,13 @@ namespace FunctionChallenge.Models
         public double c { get; set; }
         [Required]
         [Range(1, 100, ErrorMessage = "Value should be between 1 and 100")]
-        public int step { get; set; }
+        public double step { get; set; }
         [Required]
         [Range(-100, 100, ErrorMessage = "Value should be between -100 and 100")]
-        public int from { get; set; }
+        public double from { get; set; }
         [Required]
         [Range(-100, 100, ErrorMessage = "Value should be between -100 and 100")]
-        public int to { get; set; }
+        public double to { get; set; }
         public string chartName { get; set; }
         public string points { get; set; }
     }
