@@ -23,7 +23,7 @@
                     <label>c:</label><input type="number" name="c" defaultValue="16" asp-for="c" />
                 </div>
                 <div>
-                    <label>Step:</label><input type="number" name="step" defaultValue="1" asp-for="step" />
+                    <label>Step:</label><input type="number" name="step" step="0.5" defaultValue="1" asp-for="step" />
                 </div>
                 <div>
                     <label>From:</label> <input type="number" name="from" defaultValue="-10" asp-for="from" />
@@ -47,4 +47,5 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
     <script src="~/js/ChartScript.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 }

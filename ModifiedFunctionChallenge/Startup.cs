@@ -55,6 +55,24 @@ namespace FunctionChallenge
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            var supportedCultures = new[]
+            {           
+                new CultureInfo("en-US"),
+                new CultureInfo("en-GB"),
+                new CultureInfo("en"),
+                new CultureInfo("ru-RU"),
+                new CultureInfo("ru")
+            };
+            supportedCultures[3].NumberFormat.NumberDecimalSeparator = ".";
+            supportedCultures[4].NumberFormat.NumberDecimalSeparator = ".";
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("ru-RU"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
+
             app.UseReact(config => {
 
             });

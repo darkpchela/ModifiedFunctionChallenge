@@ -12,6 +12,7 @@ using FunctionChallenge.BusinessLayer.Interfaces;
 using AutoMapper;
 using FunctionChallenge.BusinessLayer.Infrastructure;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
 
 namespace FunctionChallenge.Controllers
 {
@@ -28,7 +29,7 @@ namespace FunctionChallenge.Controllers
         public IActionResult Main()
         {
             return View(new ChartViewModel() {
-            a=5, b=5, c=16, step=1, from=-10, to=10
+            a=5, b=5, c=16, step=1, from=-10, to=10, chartName=CultureInfo.CurrentCulture.Name
             });
         }
 
