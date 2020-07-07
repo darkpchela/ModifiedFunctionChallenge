@@ -139,6 +139,10 @@ body {
   max-width: 60px;
   width: 10vw;
 }
+.chart-form .big-input input{
+  max-width: 250px;
+  width: 20vw;
+}
 
 .chart-form.info-form{
   display: flex;

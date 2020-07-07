@@ -127,7 +127,7 @@ namespace FunctionChallenge.BusinessLayer.Services
                 from = res.fromX,
                 to = res.toX,
                 step = res.step,
-                points = JsonSerializer.Serialize(allPoints.Where(p => p.CKey == res.id).OrderByDescending(p => p.x).Select(p => p))
+                points = JsonSerializer.Serialize(allPoints.Where(p => p.CKey == res.id).OrderBy(p => p.x).Select(p => p))
             };
             return chartModel;
         }
