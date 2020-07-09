@@ -13,17 +13,18 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace FunctionChallenge.BusinessLayer.Services
 {
     internal class ChartService : IChartService
     {
+        private ILogger<ChartService> logger;
         private readonly IUnitOfWork unitOfWork;
-        //private readonly IMapper mapper;
-        public ChartService(IUnitOfWork unitOfWork/*, IMapper mapper*/)
+        public ChartService(IUnitOfWork unitOfWork, ILogger<ChartService> logger)
         {
             this.unitOfWork = unitOfWork;
-            //this.mapper = mapper;
+            this.logger = logger;
         }
 
         public async Task<string> GetPointsForAsync(ChartModel model)
@@ -33,7 +34,8 @@ namespace FunctionChallenge.BusinessLayer.Services
             if (model.step >= (model.to - model.from))
                throw new CustomValidationException("Value of 'step' must be greater, then difference of 'from' and 'to'", "");
 
-            var points = await Task.Run(() =>innerFunction(model.a, model.b, model.c, model.step, model.from, model.to));
+            //var points = await Task.Run(() =>innerFunction(model.a, model.b, model.c, model.step, model.from, model.to));
+            var points = await Task.Run(()=>ParallelInnerFunc(model.a, model.b, model.c, model.step, model.from, model.to));
             return JsonSerializer.Serialize(points);
         }
         private IEnumerable<Point> innerFunction(double a, double b, double c, double step,
@@ -53,6 +55,36 @@ namespace FunctionChallenge.BusinessLayer.Services
             return points;
         }
 
+        private IEnumerable<Point> ParallelInnerFunc(double a, double b, double c, double step,
+            double from, double to)
+        {
+            object locker = new object();
+            List<Point> points = new List<Point>();
+            Parallel.ForEach(StepIterator(from, to, step),(x)=> {
+                double y = a * (Math.Pow(x, 2)) + (b * x) + c;
+                Point point = new Point()
+                {
+                    x = x,
+                    y = y
+                };
+
+                lock (locker)
+                {
+                    points.Add(point);
+                }
+            });
+
+            return points.OrderBy(p=>p.x);
+
+            //Iterator for parallel func
+            IEnumerable<double> StepIterator(double startIndex, double endIndex, double stepSize)
+            {
+                for (double x = startIndex; x < endIndex; x += stepSize)
+                {
+                    yield return x;
+                }
+            }
+        }
         public async Task SaveAsync(ChartModel model)
         {
             if (model.points == null)
