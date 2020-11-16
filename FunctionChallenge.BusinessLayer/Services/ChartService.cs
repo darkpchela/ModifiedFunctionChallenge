@@ -164,10 +164,6 @@ namespace FunctionChallenge.BusinessLayer.Services
             return chartModel;
         }
 
-        public async Task UpdateAsync(ChartModel model)
-        {
-
-        }
         public async Task DeleteByNameAsync(string name)
         {
             var chart = unitOfWork.Charts.GetAll().First(c=>c.ChartName==name);

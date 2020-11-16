@@ -5,13 +5,14 @@ class ChartWindow extends React.Component {
         super(props);
     }
 
-    render(){
+    render() {
         return (
             <div className="chart-container">
                 <canvas id={this.props.chartId}></canvas>
-                </div>
+            </div>
         );
     }
+
     componentDidMount() {
         let ctx = document.getElementById(this.props.chartId);
         chart = new Chart(ctx,
@@ -53,6 +54,7 @@ class ListItem extends React.Component {
         return <li>{this.props.text}</li>;
     }
 }
+
 class ErrorList extends React.Component {
     render() {
         return (
@@ -65,12 +67,11 @@ class ErrorList extends React.Component {
                     }
                 </ul>
             </div>
-            );
+        );
     }
 }
 
 class ChartInputForm extends React.Component {
-
     constructor(props) {
         console.log("construcor");
         super(props);
@@ -139,13 +140,19 @@ class ChartInputForm extends React.Component {
                 method: 'POST',
                 data: data,
                 url: '/Home/FunctionAjax/',
-                success: function (points) {
+                success: function (response) {
+                    let points = JSON.parse(response);
                     if (points !== null) {
                         chart.data.labels = [];
                         chart.data.datasets[0].data = [];
-                        for (let i = 0; i < points.length; i++) {
-                            chart.data.labels.push(points[i].x);
-                            chart.data.datasets[0].data.push(points[i].y);
+                        try {
+                            for (let i = 0; i < points.length; i++) {
+                                chart.data.labels.push(points[i].x);
+                                chart.data.datasets[0].data.push(points[i].y);
+                            }
+                        }
+                        catch (ex) {
+                            console.log(ex);
                         }
                         chart.update();
                     }
@@ -164,13 +171,13 @@ class ChartInputForm extends React.Component {
                             <label>a:</label> <input type="number" id="a" name="a" defaultValue="5" onChange={this.onInputChange} />
                         </div>
                         <div>
-                            <label>b:</label><input type="number" id="b" name="b" defaultValue="5" onChange={this.onInputChange}  />
+                            <label>b:</label><input type="number" id="b" name="b" defaultValue="5" onChange={this.onInputChange} />
                         </div>
                         <div>
-                            <label>c:</label><input type="number" id="c" name="c" defaultValue="16" onChange={this.onInputChange}  />
+                            <label>c:</label><input type="number" id="c" name="c" defaultValue="16" onChange={this.onInputChange} />
                         </div>
                         <div>
-                            <label>Step:</label><input type="number" id="step" name="step" min="1" defaultValue="1" onChange={this.onInputChange}  />
+                            <label>Step:</label><input type="number" id="step" name="step" min="1" defaultValue="1" onChange={this.onInputChange} />
                         </div>
                         <div>
                             <label>From:</label> <input type="number" id="from" name="from" defaultValue="-10" onChange={this.onInputChange} />
